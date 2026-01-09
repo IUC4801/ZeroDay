@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { ChevronRight, RefreshCw, AlertCircle } from 'lucide-react';
+import { ChevronRight, RefreshCw, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import StatsDashboard from '../components/StatsDashboard';
 import FilterPanel from '../components/FilterPanel';
 import CVETable from '../components/CVETable';
 import CVEDetailModal from '../components/CVEDetailModal';
+import BackToTop from '../components/BackToTop';
+import { SkeletonCard, SkeletonTable } from '../components/Loading';
 import { fetchCVEs } from '../services/api';
 
 const Dashboard = () => {
@@ -25,6 +27,7 @@ const Dashboard = () => {
   const [showNewCVEsBanner, setShowNewCVEsBanner] = useState(false);
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(true);
   const [useInfiniteScroll, setUseInfiniteScroll] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
   
   const tableContainerRef = useRef(null);
   const pollInterval = useRef(null);
@@ -44,6 +47,7 @@ const Dashboard = () => {
         total: data.total || 0,
         totalPages: data.totalPages || 0
       });
+      setLastUpdated(new Date());
       showToast('CVEs loaded successfully', 'success');
     } else {
       setError(apiError);
@@ -182,7 +186,23 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
           {/* Stats Dashboard */}
           <div className="mb-6">
-            <StatsDashboard />
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-3">
+                <SkeletonCard size="md" />
+                <SkeletonCard size="md" />
+                <SkeletonCard size="md" />
+                <SkeletonCard size="md" />
+              </div>
+            ) : (
+              <StatsDashboard />
+            )}
+            {lastUpdated && (
+              <div className="mt-3 text-right">
+                <span className="text-xs text-gray-500">
+                  Last updated: {Math.floor((new Date() - lastUpdated) / 60000)} {Math.floor((new Date() - lastUpdated) / 60000) === 1 ? 'minute' : 'minutes'} ago
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Grid Layout */}
@@ -215,8 +235,9 @@ const Dashboard = () => {
                   <div className="flex items-center space-x-3">
                     <button
                       onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
-                      className="px-3 py-2 bg-slate-700 text-gray-300 rounded-lg hover:bg-slate-600 transition-colors duration-200 text-sm hidden lg:block"
+                      className="px-3 py-2 bg-slate-700 text-gray-300 rounded-lg hover:bg-slate-600 transition-colors duration-200 text-sm hidden lg:flex items-center gap-2 cursor-pointer"
                     >
+                      {isFilterPanelOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       {isFilterPanelOpen ? 'Hide' : 'Show'} Filters
                     </button>
                     <label className="flex items-center space-x-2 text-sm text-gray-400 cursor-pointer">
@@ -224,7 +245,7 @@ const Dashboard = () => {
                         type="checkbox"
                         checked={useInfiniteScroll}
                         onChange={(e) => setUseInfiniteScroll(e.target.checked)}
-                        className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-600 bg-slate-700"
+                        className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-600 bg-slate-700 cursor-pointer"
                       />
                       <span>Infinite Scroll</span>
                     </label>
@@ -233,16 +254,28 @@ const Dashboard = () => {
 
                 {error ? (
                   <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                    <AlertCircle className="h-16 w-16 text-red-500" />
+                    <AlertCircle className="h-16 w-16 text-red-500 animate-pulse" />
                     <h3 className="text-xl font-semibold text-white">Error Loading CVEs</h3>
                     <p className="text-gray-400">{error}</p>
-                    <button
-                      onClick={() => loadCVEs(1)}
-                      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-                    >
-                      Retry
-                    </button>
+                    <div className="flex flex-col items-center gap-3">
+                      <button
+                        onClick={() => loadCVEs(1)}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition-all duration-200 cursor-pointer"
+                      >
+                        Retry
+                      </button>
+                      <a
+                        href="http://localhost:5000/api/health"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-400 hover:text-blue-300 underline cursor-pointer"
+                      >
+                        Check Backend Status
+                      </a>
+                    </div>
                   </div>
+                ) : loading ? (
+                  <SkeletonTable rows={10} columns={7} size="md" />
                 ) : (
                   <CVETable
                     data={cveData}
@@ -280,6 +313,9 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+      
+      {/* Back to Top Button */}
+      <BackToTop />
     </ErrorBoundary>
   );
 };

@@ -17,7 +17,7 @@ const Footer = () => {
               Advanced CVE vulnerability intelligence platform for security professionals.
             </p>
             <p className="text-gray-500 text-xs">
-              Version {version}
+              Version <a href="/changelog" className="hover:text-blue-400 transition-colors cursor-pointer">{version}</a>
             </p>
           </div>
 
@@ -92,7 +92,7 @@ const Footer = () => {
                 href="https://twitter.com/zeroday"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-blue-400 transition-colors duration-200"
+                className="text-gray-400 hover:text-blue-400 hover:scale-110 transition-all duration-200 cursor-pointer"
                 aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
@@ -101,14 +101,14 @@ const Footer = () => {
                 href="https://linkedin.com/company/zeroday"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-blue-500 transition-colors duration-200"
+                className="text-gray-400 hover:text-blue-600 hover:scale-110 transition-all duration-200 cursor-pointer"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
               <a
-                href="mailto:contact@zeroday.io"
-                className="text-gray-400 hover:text-green-400 transition-colors duration-200"
+                href="mailto:contact@zeroday.dev"
+                className="text-gray-400 hover:text-green-400 hover:scale-110 transition-all duration-200 cursor-pointer"
                 aria-label="Email"
               >
                 <Mail className="h-5 w-5" />
@@ -116,8 +116,8 @@ const Footer = () => {
             </div>
             <p className="text-gray-400 text-sm">
               Questions or feedback?<br />
-              <a href="mailto:contact@zeroday.io" className="text-blue-400 hover:text-blue-300">
-                contact@zeroday.io
+              <a href="mailto:contact@zeroday.dev" className="text-blue-400 hover:text-blue-300 cursor-pointer">
+                contact@zeroday.dev
               </a>
             </p>
           </div>
