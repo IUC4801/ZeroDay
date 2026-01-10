@@ -35,8 +35,8 @@ const StatsDashboard = () => {
     setLoading(true);
     setError(null);
     const { data, error: apiError } = await fetchStats();
-    if (data) {
-      setStats(data);
+    if (data && data.success) {
+      setStats(data.data);
     } else {
       setError(apiError);
     }
@@ -52,44 +52,44 @@ const StatsDashboard = () => {
   const metricCards = [
     {
       label: 'Total CVEs',
-      value: stats?.totalCVEs || 0,
+      value: stats?.total || 0,
       icon: Database,
-      trend: stats?.trends?.totalCVEs || 0,
+      trend: stats?.recentAdditions || 0,
       color: 'blue'
     },
     {
       label: 'Critical CVEs (30d)',
-      value: stats?.criticalLast30Days || 0,
+      value: stats?.bySeverity?.CRITICAL || 0,
       icon: AlertTriangle,
-      trend: stats?.trends?.criticalLast30Days || 0,
+      trend: 0,
       color: 'red'
     },
     {
       label: 'High Severity CVEs',
-      value: stats?.highSeverity || 0,
+      value: stats?.bySeverity?.HIGH || 0,
       icon: Shield,
-      trend: stats?.trends?.highSeverity || 0,
+      trend: 0,
       color: 'orange'
     },
     {
       label: 'Public Exploits',
-      value: stats?.publicExploits || 0,
+      value: stats?.exploits?.withExploit || 0,
       icon: Target,
-      trend: stats?.trends?.publicExploits || 0,
+      trend: 0,
       color: 'purple'
     },
     {
       label: 'CISA KEV',
-      value: stats?.cisaKEV || 0,
+      value: stats?.exploits?.inCisaKev || 0,
       icon: Activity,
-      trend: stats?.trends?.cisaKEV || 0,
+      trend: 0,
       color: 'yellow'
     },
     {
       label: 'Average CVSS Score',
-      value: stats?.avgCVSS?.toFixed(1) || '0.0',
+      value: parseFloat(stats?.cvss?.average || 0).toFixed(1),
       icon: TrendingUp,
-      trend: stats?.trends?.avgCVSS || 0,
+      trend: 0,
       color: 'green'
     }
   ];

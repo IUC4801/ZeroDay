@@ -39,13 +39,13 @@ const Dashboard = () => {
 
     const { data, error: apiError } = await fetchCVEs(page, pagination.limit, currentFilters);
     
-    if (data) {
-      setCveData(append ? [...cveData, ...data.cves] : data.cves);
+    if (data && data.success) {
+      setCveData(append ? [...cveData, ...data.data] : data.data);
       setPagination({
-        page: data.page || page,
-        limit: data.limit || pagination.limit,
-        total: data.total || 0,
-        totalPages: data.totalPages || 0
+        page: data.pagination.page || page,
+        limit: data.pagination.limit || pagination.limit,
+        total: data.pagination.total || 0,
+        totalPages: data.pagination.pages || 0
       });
       setLastUpdated(new Date());
       showToast('CVEs loaded successfully', 'success');

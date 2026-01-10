@@ -25,6 +25,10 @@ const Navbar = () => {
     const { data, error } = await triggerSync();
     if (data) {
       setLastSync(new Date());
+      console.log('✅ Sync started:', data);
+    } else if (error) {
+      console.error('❌ Sync error:', error);
+      alert(`Sync failed: ${error}`);
     }
     setTimeout(() => setIsSyncing(false), 2000);
   };
